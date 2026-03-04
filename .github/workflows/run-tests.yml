@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         # using lowest and highest compatible versions
-        php: [8.1, 8.4]
+        php: [8.2, 8.4]
         laravel: [11.*, 12.*]
         filament: [4.*, 5.*] # TODO: filament 3 will only be tested on @filament-v3 branch
         stability: [prefer-stable]

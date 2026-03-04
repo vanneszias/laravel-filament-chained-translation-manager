@@ -25,10 +25,8 @@ class FilamentChainedTranslationManagerPlugin implements Plugin
     {
         $widgets = config('filament-translation-manager.widget.enabled') ? [TranslationStatusWidget::class] : [];
 
-        $panel
-            ->pages([
-                TranslationManagerPage::class,
-            ])
-            ->widgets($widgets);
+        $panel->pages([
+            TranslationManagerPage::class,
+        ])->widgets($widgets);
     }
 }

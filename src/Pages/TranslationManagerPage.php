@@ -77,7 +77,10 @@ class TranslationManagerPage extends Page implements HasForms
     public static function shouldRegisterNavigation(): bool
     {
         if (config('filament-translation-manager.gate', config('filament-translation-manager.access.gate'))) {
-            return Gate::allows(config('filament-translation-manager.gate', config('filament-translation-manager.access.gate')));
+            return Gate::allows(config(
+                'filament-translation-manager.gate',
+                config('filament-translation-manager.access.gate'),
+            ));
         }
 
         return true;
@@ -106,7 +109,10 @@ class TranslationManagerPage extends Page implements HasForms
     public function mount(): void
     {
         if (config('filament-translation-manager.gate', config('filament-translation-manager.access.gate'))) {
-            Gate::authorize(config('filament-translation-manager.gate', config('filament-translation-manager.access.gate')));
+            Gate::authorize(config(
+                'filament-translation-manager.gate',
+                config('filament-translation-manager.access.gate'),
+            ));
         }
 
         $this->loadInitialData();
@@ -115,7 +121,10 @@ class TranslationManagerPage extends Page implements HasForms
     private function loadInitialData(): void
     {
         $groups = $this->getChainedTranslationManager()->getTranslationGroups();
-        $this->groups = collect($groups)->diff(config('filament-translation-manager.ignore_groups', []))->values()->toArray();
+        $this->groups = collect($groups)
+            ->diff(config('filament-translation-manager.ignore_groups', []))
+            ->values()
+            ->toArray();
 
         $this->locales = $this->getLocalesData();
         $this->selectedLocales = $this->locales;
@@ -147,10 +156,10 @@ class TranslationManagerPage extends Page implements HasForms
 
         // transform to data structure necessary for frontend
         foreach ($translations as $key => $translation) {
-            $dataKey = $group.'.'.$key;
-            if (! array_key_exists($dataKey, $data)) {
+            $dataKey = $group . '.' . $key;
+            if (!array_key_exists($dataKey, $data)) {
                 $data[$dataKey] = [
-                    'title' => $group.' - '.$key,
+                    'title' => $group . ' - ' . $key,
                     'type' => 'group',
                     'group' => $group,
                     'translation_key' => $key,
@@ -165,29 +174,27 @@ class TranslationManagerPage extends Page implements HasForms
 
     public function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('searchTerm')
-                    ->hiddenLabel()
-                    ->placeholder(trans('filament-translation-manager::messages.search_term_placeholder'))
-                    ->prefixIcon('heroicon-o-magnifying-glass'),
+        return $schema->components([
+            TextInput::make('searchTerm')
+                ->hiddenLabel()
+                ->placeholder(trans('filament-translation-manager::messages.search_term_placeholder'))
+                ->prefixIcon('heroicon-o-magnifying-glass'),
 
-                Select::make('selectedGroups')
-                    ->hiddenLabel()
-                    ->placeholder(trans('filament-translation-manager::messages.selected_groups_placeholder'))
-                    ->multiple()
-                    ->options(array_combine($this->groups, $this->groups)),
-                Select::make('selectedLocales')
-                    ->hiddenLabel()
-                    ->placeholder(trans('filament-translation-manager::messages.selected_languages_placeholder'))
-                    ->multiple()
-                    ->options(array_combine($this->locales, $this->locales))
-                    ->columnSpan(1),
-                Toggle::make('onlyShowMissingTranslations')
-                    ->label(trans('filament-translation-manager::messages.only_show_missing_translations_lbl'))
-                    ->default(false),
-            ])
-            ->columns(2);
+            Select::make('selectedGroups')
+                ->hiddenLabel()
+                ->placeholder(trans('filament-translation-manager::messages.selected_groups_placeholder'))
+                ->multiple()
+                ->options(array_combine($this->groups, $this->groups)),
+            Select::make('selectedLocales')
+                ->hiddenLabel()
+                ->placeholder(trans('filament-translation-manager::messages.selected_languages_placeholder'))
+                ->multiple()
+                ->options(array_combine($this->locales, $this->locales))
+                ->columnSpan(1),
+            Toggle::make('onlyShowMissingTranslations')
+                ->label(trans('filament-translation-manager::messages.only_show_missing_translations_lbl'))
+                ->default(false),
+        ])->columns(2);
     }
 
     public function filterTranslations(): void
@@ -213,12 +220,14 @@ class TranslationManagerPage extends Page implements HasForms
 
         if ($this->onlyShowMissingTranslations) {
             $selectedLocales = $this->getFilteredLocales();
-            $filteredTranslations = $filteredTranslations->filter(function ($translationItem, $key) use ($selectedLocales) {
+            $filteredTranslations = $filteredTranslations->filter(function ($translationItem, $key) use (
+                $selectedLocales,
+            ) {
                 return $this->checkIfTranslationMissing($translationItem['translations'], $selectedLocales);
             });
         }
 
-        if (! empty($this->selectedGroups)) {
+        if (!empty($this->selectedGroups)) {
             $filteredTranslations = $filteredTranslations->filter(function ($translationItem, $key) {
                 return in_array($translationItem['group'], $this->selectedGroups, true);
             });
@@ -251,7 +260,7 @@ class TranslationManagerPage extends Page implements HasForms
 
     private function getChainedTranslationManager(): ChainedTranslationManager
     {
-        if (! isset($this->chainedTranslationManager)) {
+        if (!isset($this->chainedTranslationManager)) {
             $this->chainedTranslationManager = app(ChainedTranslationManager::class);
         }
 
@@ -274,7 +283,7 @@ class TranslationManagerPage extends Page implements HasForms
 
     public function nextPage(): void
     {
-        if ($this->pageCounter * self::PAGE_LIMIT <= $this->totalFilteredTranslations) {
+        if (($this->pageCounter * self::PAGE_LIMIT) <= $this->totalFilteredTranslations) {
             $this->pageCounter++;
             $this->filterTranslations();
         }
@@ -295,14 +304,18 @@ class TranslationManagerPage extends Page implements HasForms
         return $count;
     }
 
-    public function translationsSaved(string $group, string $translationKey, array $newTranslation, ?array $initialTranslations = null): void
-    {
+    public function translationsSaved(
+        string $group,
+        string $translationKey,
+        array $newTranslation,
+        ?array $initialTranslations = null,
+    ): void {
         $oldMissing = $this->checkIfTranslationMissing($initialTranslations, $this->getFilteredLocales());
         $newMissing = $this->checkIfTranslationMissing($newTranslation, $this->getFilteredLocales());
 
-        if ($oldMissing && ! $newMissing) {
+        if ($oldMissing && !$newMissing) {
             $this->totalMissingFilteredTranslations--;
-        } elseif (! $oldMissing && $newMissing) {
+        } elseif (!$oldMissing && $newMissing) {
             $this->totalMissingFilteredTranslations++;
         }
     }
@@ -328,7 +341,7 @@ class TranslationManagerPage extends Page implements HasForms
 
     private function getFilteredLocales(): array
     {
-        return ! empty($this->selectedLocales) ? $this->selectedLocales : $this->locales;
+        return !empty($this->selectedLocales) ? $this->selectedLocales : $this->locales;
     }
 
     public static function getNavigationSort(): ?int

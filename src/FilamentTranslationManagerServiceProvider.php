@@ -15,18 +15,17 @@ class FilamentTranslationManagerServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        $package
-            ->name(static::$name)
-            ->hasViews()
-            ->hasTranslations()
-            ->hasConfigFile();
+        $package->name(static::$name)->hasViews()->hasTranslations()->hasConfigFile();
     }
 
     public function packageBooted(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/filament-translation-manager.php', 'filament-translation-manager');
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament-translation-manager.php', 'filament-translation-manager');
 
-        $supportedLocales = config('filament-translation-manager.locales', config('filament-translation-manager.supported_locales'));
+        $supportedLocales = config(
+            'filament-translation-manager.locales',
+            config('filament-translation-manager.supported_locales'),
+        );
 
         if (empty($supportedLocales)) {
             $supportedLocales = [

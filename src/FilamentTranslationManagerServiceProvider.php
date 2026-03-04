@@ -22,7 +22,7 @@ class FilamentTranslationManagerServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament-translation-manager.php', 'filament-translation-manager');
+        $this->mergeConfigFrom(__DIR__.'/../config/filament-translation-manager.php', 'filament-translation-manager');
 
         /** @var array<int, string>|null $supportedLocales */
         $supportedLocales = config(
@@ -42,7 +42,7 @@ class FilamentTranslationManagerServiceProvider extends PackageServiceProvider
         // Livewire v4 (Filament v5+) auto-discovers components by namespace convention,
         // and the livewire.finder binding used by ::component() no longer exists.
         // Manual registration is only needed for Livewire v3 (Filament v4).
-        if (\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser(), 'livewire/livewire', '^3')) {
+        if (\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser, 'livewire/livewire', '^3')) {
             Livewire::component('translation-manager-page', TranslationManagerPage::class);
             Livewire::component('translation-edit-form', TranslationEditForm::class);
             Livewire::component('translation-status', TranslationStatusWidget::class);

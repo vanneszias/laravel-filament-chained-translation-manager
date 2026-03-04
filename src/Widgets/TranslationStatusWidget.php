@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Statikbe\FilamentTranslationManager\Widgets;
 
 use Filament\Widgets\Widget;
@@ -11,16 +13,18 @@ class TranslationStatusWidget extends Widget
 
     public static function getSort(): int
     {
-        return config('filament-translation-manager.widget.sort') ?? -1;
+        /** @var mixed $sort */
+        $sort = config('filament-translation-manager.widget.sort');
+
+        return is_int($sort) ? $sort : -1;
     }
 
     public static function canView(): bool
     {
-        if (config('filament-translation-manager.widget.gate', config('filament-translation-manager.access.gate'))) {
-            return Gate::allows(config(
-                'filament-translation-manager.widget.gate',
-                config('filament-translation-manager.access.gate'),
-            ));
+        /** @var mixed $gate */
+        $gate = config('filament-translation-manager.widget.gate', config('filament-translation-manager.access.gate'));
+        if (is_string($gate) && $gate !== '') {
+            return Gate::allows($gate);
         }
 
         return true;

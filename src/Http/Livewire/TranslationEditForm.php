@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Statikbe\FilamentTranslationManager\Http\Livewire;
 
 use Filament\Notifications\Notification;
@@ -37,7 +39,12 @@ class TranslationEditForm extends Component
             return;
         }
 
-        $chainedTranslationManager->save($locale, $this->group, $this->translationKey, $this->translations[$locale]);
+        $chainedTranslationManager->save(
+            $locale,
+            $this->group,
+            $this->translationKey,
+            (string) ($this->translations[$locale] ?? ''),
+        );
 
         $this->dispatch(
             self::EVENT_TRANSLATIONS_SAVED,
@@ -49,9 +56,11 @@ class TranslationEditForm extends Component
 
         $this->initialTranslations = $this->translations;
 
+        $savedMessage = trans('filament-translation-manager::messages.saved_translation');
+
         Notification::make()
             ->success()
-            ->title(trans('filament-translation-manager::messages.saved_translation'))
+            ->title(is_string($savedMessage) ? $savedMessage : '')
             ->send();
     }
 

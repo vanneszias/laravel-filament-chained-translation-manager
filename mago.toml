@@ -20,9 +20,14 @@ integrations = ["laravel", "phpunit", "pest"]
 ambiguous-function-call = { enabled = false }
 literal-named-argument = { enabled = false }
 halstead = { effort-threshold = 7000 }
+too-many-methods = { threshold = 15 }
+too-many-properties = { threshold = 16 }
+kan-defect = { threshold = 2.1 }
+cyclomatic-complexity = { threshold = 30 }
 
 [analyzer]
 plugins = []
+ignore = ["mixed-assignment"]
 find-unused-definitions = true
 find-unused-expressions = false
 analyze-dead-code = false
@@ -35,3 +40,4 @@ strict-list-index-checks = false
 no-boolean-literal-comparison = false
 check-missing-type-hints = false
 register-super-globals = true
+

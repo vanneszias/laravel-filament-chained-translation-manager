@@ -20,7 +20,7 @@ class FilamentTranslationManagerServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament-translation-manager.php', 'filament-translation-manager');
+        $this->mergeConfigFrom(__DIR__.'/../config/filament-translation-manager.php', 'filament-translation-manager');
 
         $supportedLocales = config(
             'filament-translation-manager.locales',

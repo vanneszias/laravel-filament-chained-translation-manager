@@ -91,7 +91,6 @@ class TranslationDataService
      */
     public function applySearchFilter(Collection $translations, string $searchTerm): Collection
     {
-        /** @var Collection<int, array<string, mixed>> $result */
         return $translations->filter(static function (mixed $translationItem) use ($searchTerm): bool {
             if (Str::contains((string) $translationItem['title'], $searchTerm, true)) {
                 return true;
@@ -119,7 +118,6 @@ class TranslationDataService
      */
     public function applyMissingFilter(Collection $translations, array $filteredLocales): Collection
     {
-        /** @var Collection<int, array<string, mixed>> $result */
         return $translations->filter(function (mixed $translationItem) use ($filteredLocales): bool {
             /** @var array<string, string|null> $itemTranslations */
             $itemTranslations = $translationItem['translations'];
@@ -137,7 +135,6 @@ class TranslationDataService
      */
     public function applyGroupFilter(Collection $translations, array $selectedGroups): Collection
     {
-        /** @var Collection<int, array<string, mixed>> $result */
         return $translations->filter(static fn (mixed $translationItem): bool => in_array(
             (string) $translationItem['group'],
             $selectedGroups,

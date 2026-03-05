@@ -85,7 +85,7 @@ class TranslationManagerPage extends Page implements HasForms
         /** @var mixed $group */
         $group = config('filament-translation-manager.navigation_group');
 
-        if (! is_string($group)) {
+        if (!is_string($group)) {
             return null;
         }
 
@@ -245,11 +245,11 @@ class TranslationManagerPage extends Page implements HasForms
         $oldMissing = $service->isTranslationMissing($oldTranslations, $filteredLocales);
         $newMissing = $service->isTranslationMissing($newTranslations, $filteredLocales);
 
-        if ($oldMissing && ! $newMissing) {
+        if ($oldMissing && !$newMissing) {
             $this->totalMissingFilteredTranslations--;
         }
 
-        if (! $oldMissing && $newMissing) {
+        if (!$oldMissing && $newMissing) {
             $this->totalMissingFilteredTranslations++;
         }
     }

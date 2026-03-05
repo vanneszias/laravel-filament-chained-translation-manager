@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Gate;
 
 class TranslationStatusWidget extends Widget
 {
-    /** @var view-string */
     protected string $view = 'filament-translation-manager::widgets.translation-status';
 
     public static function getSort(): int

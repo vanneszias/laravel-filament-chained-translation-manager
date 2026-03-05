@@ -25,7 +25,7 @@ class TranslationDataService
         $rawGroups = $this->translationManager->getTranslationGroups();
 
         foreach ($rawGroups as $group) {
-            if (!is_string($group)) {
+            if (! is_string($group)) {
                 continue;
             }
 
@@ -65,10 +65,10 @@ class TranslationDataService
         $translations = $this->translationManager->getTranslationsForGroup($locale, $group);
 
         foreach ($translations as $key => $translation) {
-            $dataKey = $group . '.' . $key;
-            if (!array_key_exists($dataKey, $data)) {
+            $dataKey = $group.'.'.$key;
+            if (! array_key_exists($dataKey, $data)) {
                 $data[$dataKey] = [
-                    'title' => $group . ' - ' . $key,
+                    'title' => $group.' - '.$key,
                     'type' => 'group',
                     'group' => $group,
                     'translation_key' => $key,
@@ -135,7 +135,7 @@ class TranslationDataService
      */
     public function applyGroupFilter(Collection $translations, array $selectedGroups): Collection
     {
-        return $translations->filter(static fn(mixed $translationItem): bool => in_array(
+        return $translations->filter(static fn (mixed $translationItem): bool => in_array(
             (string) $translationItem['group'],
             $selectedGroups,
             true,
@@ -201,7 +201,7 @@ class TranslationDataService
         }
 
         foreach ($translations as $locale => $translation) {
-            if (!in_array($locale, $filteredLocales, true)) {
+            if (! in_array($locale, $filteredLocales, true)) {
                 continue;
             }
 

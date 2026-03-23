@@ -7,6 +7,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Statikbe\AiTranslation\AiTranslationService;
 use Statikbe\FilamentTranslationManager\Pages\TranslationManagerPage;
 use Statikbe\FilamentTranslationManager\Widgets\TranslationStatusWidget;
 
@@ -254,7 +255,7 @@ class FilamentChainedTranslationManagerPlugin implements Plugin
      */
     public function isAiEnabled(): bool
     {
-        return $this->aiEnabled && class_exists(\Statikbe\AiTranslation\AiTranslationService::class);
+        return $this->aiEnabled && class_exists(AiTranslationService::class);
     }
 
     public function getAiDriver(): ?string

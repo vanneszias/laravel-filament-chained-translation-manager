@@ -25,6 +25,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Statikbe\AiTranslation\AiTranslationService;
 use Statikbe\FilamentTranslationManager\FilamentChainedTranslationManagerPlugin;
 use Statikbe\LaravelChainedTranslator\ChainedTranslationManager;
 
@@ -84,7 +85,7 @@ class TranslationManagerPage extends Page implements HasTable
         $plugin = FilamentChainedTranslationManagerPlugin::get();
         $locales = $plugin->getLocales();
         $sourceLocale = $plugin->getSourceLocale();
-        $translatorLocales = array_values(array_filter($locales, fn($l) => $l !== $sourceLocale));
+        $translatorLocales = array_values(array_filter($locales, fn ($l) => $l !== $sourceLocale));
 
         return $table
             ->records(function (?array $filters, ?string $search, int|string $page, int|string $recordsPerPage) use (
@@ -154,7 +155,7 @@ class TranslationManagerPage extends Page implements HasTable
             ->label(strtoupper($sourceLocale))
             ->badge()
             ->color('gray')
-            ->getStateUsing(fn(array $record): ?string => $record['translations'][$sourceLocale] ?? null)
+            ->getStateUsing(fn (array $record): ?string => $record['translations'][$sourceLocale] ?? null)
             ->placeholder(trans('filament-translation-manager::messages.missing_translation'))
             ->wrap()
             ->limit(100)
@@ -162,9 +163,9 @@ class TranslationManagerPage extends Page implements HasTable
 
         // Editable locale columns
         foreach ($translatorLocales as $locale) {
-            $columns[] = TextInputColumn::make('locale_' . $locale)
+            $columns[] = TextInputColumn::make('locale_'.$locale)
                 ->label(strtoupper($locale))
-                ->getStateUsing(fn(array $record) => $record['translations'][$locale] ?? null)
+                ->getStateUsing(fn (array $record) => $record['translations'][$locale] ?? null)
                 ->placeholder(trans('filament-translation-manager::messages.missing_translation'))
                 ->updateStateUsing(function (?string $state, array $record) use (
                     $locale,
@@ -220,9 +221,9 @@ class TranslationManagerPage extends Page implements HasTable
             ->label(trans('filament-translation-manager::messages.edit_action'))
             ->icon('heroicon-o-pencil-square')
             ->color('gray')
-            ->fillForm(fn(array $record): array => array_merge([
+            ->fillForm(fn (array $record): array => array_merge([
                 '_source' => $record['translations'][$sourceLocale] ?? '',
-            ], collect($translatorLocales)->mapWithKeys(fn($locale) => [$locale => $record['translations'][$locale] ?? ''])->all()))
+            ], collect($translatorLocales)->mapWithKeys(fn ($locale) => [$locale => $record['translations'][$locale] ?? ''])->all()))
             ->form(function (array $record) use ($sourceLocale, $translatorLocales): array {
                 $fields = [
                     TextInput::make('_source')
@@ -245,7 +246,7 @@ class TranslationManagerPage extends Page implements HasTable
             })
             ->action(function (array $record, array $data) use ($translatorLocales, $chainedTranslationManager): void {
                 foreach ($translatorLocales as $locale) {
-                    if (!array_key_exists($locale, $data)) {
+                    if (! array_key_exists($locale, $data)) {
                         continue;
                     }
 
@@ -284,10 +285,10 @@ class TranslationManagerPage extends Page implements HasTable
             ->icon('heroicon-o-sparkles')
             ->color('warning')
             ->tooltip(trans('filament-translation-manager::messages.ai_translate_row_action_tooltip'))
-            ->visible(fn() => $plugin->hasAiRowAction())
+            ->visible(fn () => $plugin->hasAiRowAction())
             ->action(function (array $record) use ($plugin, $locales, $sourceLocale): void {
-                /** @var \Statikbe\AiTranslation\AiTranslationService $aiService */
-                $aiService = app(\Statikbe\AiTranslation\AiTranslationService::class);
+                /** @var AiTranslationService $aiService */
+                $aiService = app(AiTranslationService::class);
                 $sourceText = $record['translations'][$sourceLocale] ?? '';
                 $translatedCount = 0;
 
@@ -305,7 +306,7 @@ class TranslationManagerPage extends Page implements HasTable
                         continue;
                     }
 
-                    if (!blank($record['translations'][$locale] ?? null)) {
+                    if (! blank($record['translations'][$locale] ?? null)) {
                         continue; // Already translated — skip
                     }
 
@@ -351,8 +352,8 @@ class TranslationManagerPage extends Page implements HasTable
             ->icon('heroicon-o-sparkles')
             ->color('warning')
             ->action(function (array $record, Set $set) use ($plugin, $sourceLocale, $translatorLocales): void {
-                /** @var \Statikbe\AiTranslation\AiTranslationService $aiService */
-                $aiService = app(\Statikbe\AiTranslation\AiTranslationService::class);
+                /** @var AiTranslationService $aiService */
+                $aiService = app(AiTranslationService::class);
                 $sourceText = $record['translations'][$sourceLocale] ?? '';
 
                 if (blank($sourceText)) {
@@ -388,7 +389,7 @@ class TranslationManagerPage extends Page implements HasTable
         array $locales,
         string $sourceLocale,
     ): array {
-        if (!$plugin->hasAiHeaderAction()) {
+        if (! $plugin->hasAiHeaderAction()) {
             return [];
         }
 
@@ -404,8 +405,8 @@ class TranslationManagerPage extends Page implements HasTable
                     'filament-translation-manager::messages.ai_translate_all_missing_confirm',
                 ))
                 ->action(function () use ($plugin, $locales, $sourceLocale): void {
-                    /** @var \Statikbe\AiTranslation\AiTranslationService $aiService */
-                    $aiService = app(\Statikbe\AiTranslation\AiTranslationService::class);
+                    /** @var AiTranslationService $aiService */
+                    $aiService = app(AiTranslationService::class);
                     $queuedLocales = 0;
 
                     foreach ($locales as $locale) {
@@ -442,8 +443,8 @@ class TranslationManagerPage extends Page implements HasTable
                 ->color('warning')
                 ->requiresConfirmation()
                 ->action(function (Collection $records) use ($plugin, $locales, $sourceLocale): void {
-                    /** @var \Statikbe\AiTranslation\AiTranslationService $aiService */
-                    $aiService = app(\Statikbe\AiTranslation\AiTranslationService::class);
+                    /** @var AiTranslationService $aiService */
+                    $aiService = app(AiTranslationService::class);
                     $translatedCount = 0;
 
                     foreach ($records as $record) {
@@ -458,7 +459,7 @@ class TranslationManagerPage extends Page implements HasTable
                                 continue;
                             }
 
-                            if (!blank($record['translations'][$locale] ?? null)) {
+                            if (! blank($record['translations'][$locale] ?? null)) {
                                 continue;
                             }
 
@@ -523,12 +524,12 @@ class TranslationManagerPage extends Page implements HasTable
             });
         }
 
-        if (!empty($selectedGroups)) {
-            $records = $records->filter(fn(array $record) => in_array($record['group'], $selectedGroups, true));
+        if (! empty($selectedGroups)) {
+            $records = $records->filter(fn (array $record) => in_array($record['group'], $selectedGroups, true));
         }
 
         if ($missingOnly) {
-            $records = $records->filter(fn(array $record) => $this->hasMissingTranslations($record, $locales));
+            $records = $records->filter(fn (array $record) => $this->hasMissingTranslations($record, $locales));
         }
 
         $records = $records->sortBy([
@@ -563,9 +564,9 @@ class TranslationManagerPage extends Page implements HasTable
                 $translations = $chainedTranslationManager->getTranslationsForGroup($locale, $group);
 
                 foreach ($translations as $key => $value) {
-                    $recordKey = $group . '.' . $key;
+                    $recordKey = $group.'.'.$key;
 
-                    if (!array_key_exists($recordKey, $data)) {
+                    if (! array_key_exists($recordKey, $data)) {
                         $data[$recordKey] = [
                             '__key' => $recordKey,
                             'group' => $group,
@@ -605,4 +606,3 @@ class TranslationManagerPage extends Page implements HasTable
             ->all();
     }
 }
-

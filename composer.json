@@ -20,10 +20,13 @@
             "role": "Developer"
         }
     ],
+    "suggest": {
+        "statikbe/laravel-ai-translation": "Enables AI translation actions (per-row, bulk, modal, and header) inside the translation manager."
+    },
     "require": {
         "php": "^8.1|^8.2|^8.3|^8.4",
         "filament/filament": "^4.0|^5.0",
-        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
         "spatie/laravel-package-tools": "^1.14.0",
         "statikbe/laravel-chained-translator": "^2.5"
     },
